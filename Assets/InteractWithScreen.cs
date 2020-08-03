@@ -12,6 +12,8 @@ public class InteractWithScreen : MonoBehaviour
     public RawImage screen;
     public GameObject resultCandidate;
     VideoPlayer videoPlayer;
+
+    public VideoPlayer[] allVideoPlayer;
     void Start()
     {
         candidates = new List<GameObject>();
@@ -34,19 +36,42 @@ public class InteractWithScreen : MonoBehaviour
                 }
             }
 
-            videoPlayer = resultCandidate.GetComponent<VideoPlayer>();
+            // video player
+            videoPlayer = resultCandidate.GetComponentInChildren<VideoPlayer>();
+            foreach (VideoPlayer player in allVideoPlayer)
+            {
+                if (videoPlayer != player)
+                {
+                    player.SetDirectAudioMute(0, true);
+                }
+                else
+                {
+                    player.SetDirectAudioVolume(0, player.GetDirectAudioVolume(0) + 0.5f);
+                }
+            }
 
-            screen.texture = resultCandidate.GetComponent<VideoPlayer>().targetTexture;
 
+            screen.texture = resultCandidate.GetComponentInChildren<VideoPlayer>().targetTexture;
             StartCoroutine(FadeScreen(true));
-
         }
         else if (Input.GetKeyUp(KeyCode.Z))
         {
+            // video player
+            foreach (VideoPlayer player in allVideoPlayer)
+            {
+                if (videoPlayer != player)
+                {
+                    player.SetDirectAudioMute(0, false);
+                }
+                else
+                {
+                    player.SetDirectAudioVolume(0, player.GetDirectAudioVolume(0) - 0.5f);
+                }
+
+            }
             resultCandidate = null;
             StartCoroutine(FadeScreen(false));
         }
-
     }
 
     private IEnumerator FadeScreen(bool fadeIn)
