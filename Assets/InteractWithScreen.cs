@@ -11,18 +11,21 @@ public class InteractWithScreen : MonoBehaviour
     public GameObject canvas;
     public RawImage screen;
     public GameObject resultCandidate;
+    public GameObject introduction;
     VideoPlayer videoPlayer;
+    bool focusScreen = false;
 
     public VideoPlayer[] allVideoPlayer;
     void Start()
     {
         candidates = new List<GameObject>();
         detectionRadius = GetComponent<SphereCollider>().radius;
+        StartCoroutine(HideIntroduction());
     }
 
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.X))
+        if (Input.GetKeyUp(KeyCode.Space) && !focusScreen)
         {
             if (candidates.Count <= 0) return;
             float minDistance = detectionRadius;
@@ -54,7 +57,7 @@ public class InteractWithScreen : MonoBehaviour
             screen.texture = resultCandidate.GetComponentInChildren<VideoPlayer>().targetTexture;
             StartCoroutine(FadeScreen(true));
         }
-        else if (Input.GetKeyUp(KeyCode.Z))
+        else if (Input.GetKeyUp(KeyCode.Space) && focusScreen)
         {
             // video player
             foreach (VideoPlayer player in allVideoPlayer)
@@ -74,6 +77,23 @@ public class InteractWithScreen : MonoBehaviour
         }
     }
 
+    private IEnumerator HideIntroduction()
+    {
+        yield return new WaitForSeconds(2.5f);
+
+        while (introduction.activeSelf)
+        {
+            foreach (Text text in introduction.GetComponentsInChildren<Text>())
+            {
+                text.color = new Color(text.color.r, text.color.g, text.color.b, text.color.a - 0.01f);
+                if (text.color.a < 0.05f)
+                {
+                    introduction.SetActive(false);
+                }
+            }
+            yield return new WaitForSeconds(0.033f);
+        }
+    }
     private IEnumerator FadeScreen(bool fadeIn)
     {
         if (fadeIn)
@@ -84,6 +104,7 @@ public class InteractWithScreen : MonoBehaviour
                 yield return new WaitForSeconds(0.033f);
             }
             screen.color = new Color(screen.color.r, screen.color.g, screen.color.b, 1f);
+            focusScreen = true;
             yield return null;
 
         }
@@ -96,6 +117,7 @@ public class InteractWithScreen : MonoBehaviour
             }
             screen.color = new Color(screen.color.r, screen.color.g, screen.color.b, 0f);
             screen.texture = null;
+            focusScreen = false;
             yield return null;
         }
 
