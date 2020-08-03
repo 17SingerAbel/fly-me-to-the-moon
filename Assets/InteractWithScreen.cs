@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
+
 public class InteractWithScreen : MonoBehaviour
 {
     float detectionRadius;
@@ -9,8 +11,7 @@ public class InteractWithScreen : MonoBehaviour
     public GameObject canvas;
     public RawImage screen;
     public GameObject resultCandidate;
-
-
+    VideoPlayer videoPlayer;
     void Start()
     {
         candidates = new List<GameObject>();
@@ -21,7 +22,6 @@ public class InteractWithScreen : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.X))
         {
-            Debug.Log("doom!!");
             if (candidates.Count <= 0) return;
             float minDistance = detectionRadius;
             resultCandidate = candidates[0];
@@ -33,6 +33,10 @@ public class InteractWithScreen : MonoBehaviour
                     resultCandidate = candidate;
                 }
             }
+
+            videoPlayer = resultCandidate.GetComponent<VideoPlayer>();
+
+            screen.texture = resultCandidate.GetComponent<VideoPlayer>().targetTexture;
 
             StartCoroutine(FadeScreen(true));
 
@@ -47,23 +51,27 @@ public class InteractWithScreen : MonoBehaviour
 
     private IEnumerator FadeScreen(bool fadeIn)
     {
-        Debug.Log("start corooutine!!!");
         if (fadeIn)
         {
-            while (screen.color.a != 1.0f)
+            while (screen.color.a < 0.95f)
             {
                 screen.color = new Color(screen.color.r, screen.color.g, screen.color.b, screen.color.a + 0.1f);
                 yield return new WaitForSeconds(0.033f);
             }
+            screen.color = new Color(screen.color.r, screen.color.g, screen.color.b, 1f);
+            yield return null;
 
         }
         else
         {
-            while (screen.color.a != 0.0f)
+            while (screen.color.a > 0.05f)
             {
                 screen.color = new Color(screen.color.r, screen.color.g, screen.color.b, screen.color.a - 0.1f);
                 yield return new WaitForSeconds(0.033f);
             }
+            screen.color = new Color(screen.color.r, screen.color.g, screen.color.b, 0f);
+            screen.texture = null;
+            yield return null;
         }
 
     }
