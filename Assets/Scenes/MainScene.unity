@@ -246,7 +246,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 53171936}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: e7d503c78b5a9734cb077d25d24aa475, type: 3}
+  m_VideoClip: {fileID: 0}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -263,7 +263,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 0.05
-  m_Url: 
+  m_Url: https://fountainpao1234.s3.amazonaws.com/adi/Build/birth+vr.mp4
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -685,7 +685,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 0.05
-  m_Url: 
+  m_Url: https://fountainpao1234.s3.amazonaws.com/adi/Build/stone_new.mp4
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -2126,7 +2126,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 0.05
-  m_Url: 
+  m_Url: https://fountainpao1234.s3.amazonaws.com/adi/Build/desire+vr.mp4
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -2322,7 +2322,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 0.05
-  m_Url: 
+  m_Url: https://fountainpao1234.s3.amazonaws.com/adi/Build/ageing+vr.mp4
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -2602,7 +2602,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 0.05
-  m_Url: 
+  m_Url: https://fountainpao1234.s3.amazonaws.com/adi/Build/sea+vr.mp4
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -2777,7 +2777,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1387243566}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 1b9c2c5bc3b1a0c428f7cec4301c7bcc, type: 3}
+  m_VideoClip: {fileID: 0}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -2794,7 +2794,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 0.01
-  m_Url: 
+  m_Url: https://fountainpao1234.s3.amazonaws.com/adi/Build/hair_vr.mp4
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -2969,7 +2969,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1741010275}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 4ca1c2d0ffe570b4d90e25831f8bdcac, type: 3}
+  m_VideoClip: {fileID: 0}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -2986,7 +2986,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 0.05
-  m_Url: 
+  m_Url: https://fountainpao1234.s3.amazonaws.com/adi/Build/river_vr.mp4
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -3234,7 +3234,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 0.05
-  m_Url: 
+  m_Url: https://fountainpao1234.s3.amazonaws.com/adi/Build/ash+vr.mp4
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1

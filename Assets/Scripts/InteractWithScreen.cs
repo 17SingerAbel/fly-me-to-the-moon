@@ -20,6 +20,7 @@ public class InteractWithScreen : MonoBehaviour
     {
         candidates = new List<GameObject>();
         detectionRadius = GetComponent<SphereCollider>().radius;
+        // StartCoroutine(LoadVideos());
         StartCoroutine(HideIntroduction());
     }
 
@@ -77,9 +78,43 @@ public class InteractWithScreen : MonoBehaviour
         }
     }
 
+    private IEnumerator LoadVideos()
+    {
+        bool ready = false;
+        bool[] allLoaded = new bool[8];
+        for (int i = 0; i < 8; i++)
+        {
+            allLoaded[i] = false;
+        }
+        while (!ready)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                VideoPlayer player = allVideoPlayer[i];
+                if (player.isPrepared)
+                {
+                    allLoaded[i] = true;
+                    ready = true;
+                    Debug.Log("video" + (i + 1).ToString() + " done");
+                }
+
+            }
+            for (int i = 0; i < 8; i++)
+            {
+                if (allLoaded[i] == false)
+                {
+                    ready = false;
+                }
+            }
+            Debug.Log("LOADING");
+            yield return new WaitForSeconds(0.1f);
+        }
+        Debug.Log("DONE");
+        yield return null;
+    }
     private IEnumerator HideIntroduction()
     {
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(10f);
 
         while (introduction.activeSelf)
         {
