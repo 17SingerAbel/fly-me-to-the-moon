@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
-
+using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit;
 public class InteractWithScreen : MonoBehaviour
 {
+    public XRNode inputSource;
+    public float distance = 5f;
     float detectionRadius;
     public List<GameObject> candidates;
-    public GameObject canvas;
-    public RawImage screen;
+    public GameObject screen;
     public GameObject resultCandidate;
     public GameObject introduction;
     VideoPlayer videoPlayer;
     bool focusScreen = false;
+
+    float timer = 0.0f;
 
     public VideoPlayer[] allVideoPlayer;
     void Start()
@@ -26,56 +30,76 @@ public class InteractWithScreen : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Space) && !focusScreen)
+        InputDevice device = InputDevices.GetDeviceAtXRNode(inputSource);
+        if (device != null)
         {
-            if (candidates.Count <= 0) return;
-            float minDistance = detectionRadius;
-            resultCandidate = candidates[0];
-            foreach (GameObject candidate in candidates)
+            device.TryGetFeatureValue(CommonUsages.trigger, out float triggerValue);
+            if (triggerValue > 0.5 && timer == 0.0f && !focusScreen)
             {
-                float distance = Vector3.Distance(candidate.transform.position, transform.position);
-                if (distance < minDistance)
+                if (candidates.Count <= 0) return;
+                float minDistance = detectionRadius;
+                resultCandidate = candidates[0];
+                foreach (GameObject candidate in candidates)
                 {
-                    resultCandidate = candidate;
+                    float distance = Vector3.Distance(candidate.transform.position, transform.position);
+                    if (distance < minDistance)
+                    {
+                        resultCandidate = candidate;
+                    }
                 }
-            }
 
-            // video player
-            videoPlayer = resultCandidate.GetComponentInChildren<VideoPlayer>();
-            foreach (VideoPlayer player in allVideoPlayer)
+                // video player
+                videoPlayer = resultCandidate.GetComponentInChildren<VideoPlayer>();
+                foreach (VideoPlayer player in allVideoPlayer)
+                {
+                    if (videoPlayer != player)
+                    {
+                        player.SetDirectAudioMute(0, true);
+                    }
+                    else
+                    {
+                        player.SetDirectAudioVolume(0, player.GetDirectAudioVolume(0) + 0.5f);
+                    }
+                }
+                screen.transform.position = transform.forward * distance + transform.position;
+                screen.transform.position = new Vector3(screen.transform.position.x, 3.1f, screen.transform.position.z);
+                Renderer renderer = screen.GetComponent<Renderer>();
+                renderer.materials = resultCandidate.GetComponentInChildren<VideoPlayer>().transform.GetComponent<Renderer>().materials;
+
+                screen.SetActive(true);
+
+                focusScreen = true;
+            }
+            else if (triggerValue > 0.5 && timer == 0.0f && focusScreen)
             {
-                if (videoPlayer != player)
+                // video player
+                foreach (VideoPlayer player in allVideoPlayer)
                 {
-                    player.SetDirectAudioMute(0, true);
+                    if (videoPlayer != player)
+                    {
+                        player.SetDirectAudioMute(0, false);
+                    }
+                    else
+                    {
+                        player.SetDirectAudioVolume(0, player.GetDirectAudioVolume(0) - 0.5f);
+                    }
+
                 }
-                else
-                {
-                    player.SetDirectAudioVolume(0, player.GetDirectAudioVolume(0) + 0.5f);
-                }
+                resultCandidate = null;
+                screen.SetActive(false);
+                focusScreen = false;
+
             }
-
-
-            screen.texture = resultCandidate.GetComponentInChildren<VideoPlayer>().targetTexture;
-            StartCoroutine(FadeScreen(true));
+            if (triggerValue > 0.5)
+            {
+                timer += Time.deltaTime;
+            }
+            else if (triggerValue < 0.1 && timer > 0.01)
+            {
+                timer = 0;
+            }
         }
-        else if (Input.GetKeyUp(KeyCode.Space) && focusScreen)
-        {
-            // video player
-            foreach (VideoPlayer player in allVideoPlayer)
-            {
-                if (videoPlayer != player)
-                {
-                    player.SetDirectAudioMute(0, false);
-                }
-                else
-                {
-                    player.SetDirectAudioVolume(0, player.GetDirectAudioVolume(0) - 0.5f);
-                }
 
-            }
-            resultCandidate = null;
-            StartCoroutine(FadeScreen(false));
-        }
     }
 
     private IEnumerator LoadVideos()
@@ -128,34 +152,6 @@ public class InteractWithScreen : MonoBehaviour
             }
             yield return new WaitForSeconds(0.033f);
         }
-    }
-    private IEnumerator FadeScreen(bool fadeIn)
-    {
-        if (fadeIn)
-        {
-            while (screen.color.a < 0.95f)
-            {
-                screen.color = new Color(screen.color.r, screen.color.g, screen.color.b, screen.color.a + 0.1f);
-                yield return new WaitForSeconds(0.033f);
-            }
-            screen.color = new Color(screen.color.r, screen.color.g, screen.color.b, 1f);
-            focusScreen = true;
-            yield return null;
-
-        }
-        else
-        {
-            while (screen.color.a > 0.05f)
-            {
-                screen.color = new Color(screen.color.r, screen.color.g, screen.color.b, screen.color.a - 0.1f);
-                yield return new WaitForSeconds(0.033f);
-            }
-            screen.color = new Color(screen.color.r, screen.color.g, screen.color.b, 0f);
-            screen.texture = null;
-            focusScreen = false;
-            yield return null;
-        }
-
     }
 
     private void OnTriggerEnter(Collider other)
