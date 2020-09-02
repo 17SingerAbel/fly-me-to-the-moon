@@ -9,11 +9,14 @@ public class InteractWithScreen : MonoBehaviour
 {
     public XRNode inputSource;
     public float distance = 5f;
+    public float screenHeight = 3f;
     float detectionRadius;
+    public Renderer screenRenderer;
+    public Material introductionMaterial;
+    public Material mottoMaterial;
     public List<GameObject> candidates;
     public GameObject screen;
     public GameObject resultCandidate;
-    public GameObject introduction;
     VideoPlayer videoPlayer;
     bool focusScreen = false;
 
@@ -24,7 +27,8 @@ public class InteractWithScreen : MonoBehaviour
     {
         candidates = new List<GameObject>();
         detectionRadius = GetComponent<SphereCollider>().radius;
-        // StartCoroutine(LoadVideos());
+        screenRenderer = screen.GetComponent<Renderer>();
+        screenRenderer.material = introductionMaterial;
         StartCoroutine(HideIntroduction());
     }
 
@@ -62,12 +66,10 @@ public class InteractWithScreen : MonoBehaviour
                     }
                 }
                 screen.transform.position = transform.forward * distance + transform.position;
-                screen.transform.position = new Vector3(screen.transform.position.x, 3.1f, screen.transform.position.z);
-                Renderer renderer = screen.GetComponent<Renderer>();
-                renderer.materials = resultCandidate.GetComponentInChildren<VideoPlayer>().transform.GetComponent<Renderer>().materials;
+                screen.transform.position = new Vector3(screen.transform.position.x, screenHeight, screen.transform.position.z);
 
+                screenRenderer.materials = resultCandidate.GetComponentInChildren<VideoPlayer>().transform.GetComponent<Renderer>().materials;
                 screen.SetActive(true);
-
                 focusScreen = true;
             }
             else if (triggerValue > 0.5 && timer == 0.0f && focusScreen)
@@ -138,20 +140,23 @@ public class InteractWithScreen : MonoBehaviour
     }
     private IEnumerator HideIntroduction()
     {
-        yield return new WaitForSeconds(10f);
-
-        while (introduction.activeSelf)
+        yield return new WaitForSeconds(5f);
+        while (screenRenderer.material.color.a > 0.1)
         {
-            foreach (Text text in introduction.GetComponentsInChildren<Text>())
-            {
-                text.color = new Color(text.color.r, text.color.g, text.color.b, text.color.a - 0.01f);
-                if (text.color.a < 0.05f)
-                {
-                    introduction.SetActive(false);
-                }
-            }
-            yield return new WaitForSeconds(0.033f);
+            screenRenderer.material.SetColor("_Color", new Color(screenRenderer.material.color.r, screenRenderer.material.color.g, screenRenderer.material.color.b, screenRenderer.material.color.a - 0.01f));
+            Debug.Log("Here we go");
+            yield return new WaitForSeconds(0.01f);
         }
+        screenRenderer.material = mottoMaterial;
+
+        yield return new WaitForSeconds(5f);
+        while (mottoMaterial.color.a > 0.1)
+        {
+            mottoMaterial.SetColor("_Color", new Color(mottoMaterial.color.r, mottoMaterial.color.g, mottoMaterial.color.b, mottoMaterial.color.a - 0.01f));
+            yield return new WaitForSeconds(0.01f);
+        }
+        screen.SetActive(false);
+
     }
 
     private void OnTriggerEnter(Collider other)
