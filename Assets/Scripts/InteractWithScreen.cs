@@ -19,7 +19,6 @@ public class InteractWithScreen : MonoBehaviour
     public GameObject resultCandidate;
     VideoPlayer videoPlayer;
     bool focusScreen = false;
-
     float timer = 0.0f;
 
     public VideoPlayer[] allVideoPlayer;
@@ -54,6 +53,7 @@ public class InteractWithScreen : MonoBehaviour
 
                 // video player
                 videoPlayer = resultCandidate.GetComponentInChildren<VideoPlayer>();
+                if (videoPlayer == null) return;
                 foreach (VideoPlayer player in allVideoPlayer)
                 {
                     if (videoPlayer != player)
@@ -67,17 +67,18 @@ public class InteractWithScreen : MonoBehaviour
                 }
                 screen.transform.position = transform.forward * distance + transform.position;
                 screen.transform.position = new Vector3(screen.transform.position.x, screenHeight, screen.transform.position.z);
-
+                screen.transform.rotation = Quaternion.Euler(90, transform.rotation.eulerAngles.y, 180);
                 screenRenderer.materials = resultCandidate.GetComponentInChildren<VideoPlayer>().transform.GetComponent<Renderer>().materials;
                 screen.SetActive(true);
                 focusScreen = true;
             }
             else if (triggerValue > 0.5 && timer == 0.0f && focusScreen)
             {
+
                 // video player
                 foreach (VideoPlayer player in allVideoPlayer)
                 {
-                    if (videoPlayer != player)
+                    if (videoPlayer != player || videoPlayer == null)
                     {
                         player.SetDirectAudioMute(0, false);
                     }
@@ -104,47 +105,12 @@ public class InteractWithScreen : MonoBehaviour
 
     }
 
-    private IEnumerator LoadVideos()
-    {
-        bool ready = false;
-        bool[] allLoaded = new bool[8];
-        for (int i = 0; i < 8; i++)
-        {
-            allLoaded[i] = false;
-        }
-        while (!ready)
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                VideoPlayer player = allVideoPlayer[i];
-                if (player.isPrepared)
-                {
-                    allLoaded[i] = true;
-                    ready = true;
-                    Debug.Log("video" + (i + 1).ToString() + " done");
-                }
-
-            }
-            for (int i = 0; i < 8; i++)
-            {
-                if (allLoaded[i] == false)
-                {
-                    ready = false;
-                }
-            }
-            Debug.Log("LOADING");
-            yield return new WaitForSeconds(0.1f);
-        }
-        Debug.Log("DONE");
-        yield return null;
-    }
     private IEnumerator HideIntroduction()
     {
         yield return new WaitForSeconds(5f);
         while (screenRenderer.material.color.a > 0.1)
         {
             screenRenderer.material.SetColor("_Color", new Color(screenRenderer.material.color.r, screenRenderer.material.color.g, screenRenderer.material.color.b, screenRenderer.material.color.a - 0.01f));
-            Debug.Log("Here we go");
             yield return new WaitForSeconds(0.01f);
         }
         screenRenderer.material = mottoMaterial;

@@ -6,12 +6,15 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class ContinuousMovement : MonoBehaviour
 {
     // Start is called before the first frame update
-
-    public XRNode inputSource;
+    public XRNode rotationInputSource;
+    public XRNode movementInputSource;
+    public float mouseSensitivity = 100f;
     public float gravity = 9.8f;
     public float speed = 1f;
     public float additionalHeight = 0.2f;
-    private Vector2 inputAxis;
+    float xRotation = 0f;
+    private Vector2 movementInputAxis;
+    private Vector2 rotationInputAxis;
     private XRRig rig;
     private CharacterController character;
     private float fallingSpeed;
@@ -24,17 +27,26 @@ public class ContinuousMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        InputDevice device = InputDevices.GetDeviceAtXRNode(inputSource);
-        device.TryGetFeatureValue(CommonUsages.primary2DAxis, out inputAxis);
+        InputDevice movementDevice = InputDevices.GetDeviceAtXRNode(movementInputSource);
+        movementDevice.TryGetFeatureValue(CommonUsages.primary2DAxis, out movementInputAxis);
+
+        InputDevice rotationDevice = InputDevices.GetDeviceAtXRNode(rotationInputSource);
+        rotationDevice.TryGetFeatureValue(CommonUsages.primary2DAxis, out rotationInputAxis);
 
     }
 
     private void FixedUpdate()
     {
         CapsuleFollowHeadset();
+        // // rotation
+        // float mouseX = rotationInputAxis.x * mouseSensitivity * Time.deltaTime;
+        // transform.Rotate(Vector3.up * mouseX);
+
+
+        // movement
         Quaternion headYaw = Quaternion.Euler(0, rig.cameraGameObject.transform.eulerAngles.y, 0);
 
-        Vector3 direction = headYaw * new Vector3(inputAxis.x, 0, inputAxis.y);
+        Vector3 direction = headYaw * new Vector3(movementInputAxis.x, 0, movementInputAxis.y);
         character.Move(direction * Time.fixedDeltaTime * speed);
 
         if (!character.isGrounded)
